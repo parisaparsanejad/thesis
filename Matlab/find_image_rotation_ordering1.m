@@ -4,7 +4,7 @@ clear all;
 clc;
 
 %% load image
-[y,map]=imread('image12.jpg');
+[y,map]=imread('image16.jpg');
 imshow(y,map);
 I=imcrop(y,map);
 imshow(I,map);
@@ -75,12 +75,6 @@ U3=centroids(H(2),:)
 U5=centroids(H(3),:)
 U7=centroids(H(4),:)
 
-if abs(U5(1)-U7(1))<5 & U5(2)>U7(2)
-    U7=centroids(H(3),:)
-    U5=centroids(H(4),:)
-end
-
-
 u=[U1;U3;U5;U7]
 
 % [~,idx] = sort(u(:,1)); % sort just the first column
@@ -94,19 +88,19 @@ u=[U1;U3;U5;U7]
 
 %[U5]=centroids(find(centroids(2,1)>u(1,1) & centroids(2,1)<u(2,1) & centroids(2,2)>u(1,2) & centroids(2,2)<u(2,2)))
 
-% determie if U1 has two neighbors so two shapes of z-frame are possible
+% determie if U1 has two neighbors so two shapes of z-frame is possible
 
 i=1
 y=[0 0;0 0]
 while y(1,:)==0 & i<7
     i=i+1
-if centroids(i,1)>U1(1,1) & centroids(i,1)<U5(1,1)& centroids(i,2)>=U1(1,2)& centroids(i,2)<=U5(1,2)
+if centroids(i,1)>U1(1,1) & centroids(i,1)<U5(1,1)& centroids(i,2)>U1(1,2)& centroids(i,2)<U5(1,2)
    y(1,:)=centroids(i,:)
-elseif centroids(i,1)>U1(1,1) & centroids(i,1)<U5(1,1)& centroids(i,2)>=U5(1,2)& centroids(i,2)<=U1(1,2)
+elseif centroids(i,1)>U1(1,1) & centroids(i,1)<U5(1,1)& centroids(i,2)>U5(1,2)& centroids(i,2)<U1(1,2)
   y(1,:)=centroids(i,:)
-elseif centroids(i,1)<U1(1,1) & centroids(i,1)>U5(1,1)& centroids(i,2)>=U1(1,2)& centroids(i,2)<=U5(1,2)
+elseif centroids(i,1)<U1(1,1) & centroids(i,1)>U5(1,1)& centroids(i,2)>U1(1,2)& centroids(i,2)<U5(1,2)
    y(1,:)=centroids(i,:)
-elseif centroids(i,1)<U1(1,1) & centroids(i,1)>U5(1,1)& centroids(i,2)>=U5(1,2)& centroids(i,2)<=U1(1,2)
+elseif centroids(i,1)<U1(1,1) & centroids(i,1)>U5(1,1)& centroids(i,2)>U5(1,2)& centroids(i,2)<U1(1,2)
    y(1,:)=centroids(i,:)
 else 
      y(1,:)=[0 0]
@@ -117,13 +111,13 @@ i=1
 
 while y(2,:)==0 & i<7
     i=i+1
-if centroids(i,1)>=U1(1,1) & centroids(i,1)<=U3(1,1)& centroids(i,2)>U1(1,2)& centroids(i,2)<U3(1,2)
+if centroids(i,1)>U1(1,1) & centroids(i,1)<U3(1,1)& centroids(i,2)>U1(1,2)& centroids(i,2)<U3(1,2)
    y(2,:)=centroids(i,:)
-elseif centroids(i,1)>=U1(1,1) & centroids(i,1)<=U3(1,1)& centroids(i,2)>U3(1,2)& centroids(i,2)<U1(1,2)
+elseif centroids(i,1)>U1(1,1) & centroids(i,1)<U3(1,1)& centroids(i,2)>U3(1,2)& centroids(i,2)<U1(1,2)
   y(2,:)=centroids(i,:)
-elseif centroids(i,1)<=U1(1,1) & centroids(i,1)>=U3(1,1)& centroids(i,2)>U1(1,2)& centroids(i,2)<U3(1,2)
+elseif centroids(i,1)<U1(1,1) & centroids(i,1)>U3(1,1)& centroids(i,2)>U1(1,2)& centroids(i,2)<U3(1,2)
    y(2,:)=centroids(i,:)
-elseif centroids(i,1)<=U1(1,1) & centroids(i,1)>=U3(1,1)& centroids(i,2)>U3(1,2)& centroids(i,2)<U1(1,2)
+elseif centroids(i,1)<U1(1,1) & centroids(i,1)>U3(1,1)& centroids(i,2)>U3(1,2)& centroids(i,2)<U1(1,2)
    y(2,:)=centroids(i,:)
 else 
      y(2,:)=[0 0]
@@ -134,15 +128,14 @@ if (y(1,:)~=0 & y(2,:)~=0)
     t=1
 else
     t=0
-end  
+end
 % define a  degree counter-clockwise rotation matrix
 % estimate the shape of the Z-frame if it is left_down or rleft_up
 % find the rotation cloclwise or not
 d35=U3-U5
 normd35=d35/norm(d35) 
-if normd35(2)<0
+if normd35<0
     % U3 is down and U5 is up
-    downpoint=U3;
     if t==1
         innerpoint=centroids(find(centroids(:,1)>U3(1) & centroids(:,1)<U7(1) & centroids(:,2)>U3(2) & centroids(:,2)<U7(2)))
     elseif t==0
@@ -150,13 +143,12 @@ if normd35(2)<0
     end
 else
     % U5 is down
-      downpoint=U5;
     if t==1
         innerpoint=centroids(find(centroids(:,1)>U5(1) & centroids(:,1)<U7(1) & centroids(:,2)>U5(2) & centroids(:,2)<U7(2))) 
     elseif t==0
           innerpoint=centroids(find(centroids(:,1)>U1(1) & centroids(:,1)<U5(1) & centroids(:,2)>U5(2) & centroids(:,2)<U1(2)))     
         end
- end
+    end
 
 %% angle calculation
 j=2.9
@@ -166,72 +158,29 @@ U7_orianted=U7
 % I calculate the angle between the lines U1 and the diagonal of the square
 % ( line between U1 and U7)
 
+while ( abs(atan((U7_orianted(1)-U1(1))/(U7_orianted(2)-U1(2))))<0.75 | abs(atan((U7_orianted(1)-U1(1))/(U7_orianted(2)-U1(2))))>0.80)
+j=j+0.1
+theta = pi/j;       % pi/j radians 
 
-
-if t==1 
-    theta=abs(atan((downpoint(1)-U1(1))/(downpoint(2)-U1(2))))
-    if innerpoint~=0
-    theta=theta+1.5708
-    end
-    
+if innerpoint~=0
+theta=90+theta
+end 
+if t==0
+    theta=-theta
 end
-if t== 0
-    theta=abs(atan((downpoint(1)-U1(1))/(downpoint(2)-U1(2))))
-    if innerpoint~=0
-    theta=theta+3.14159
-    end
-  if isempty(innerpoint)
-    theta=theta+4.71239
-  end
- end
-
-
-
-% 
-% if t==1 
-% theta=abs(atan((U7(1)-U1(1))/(U7(2)-U1(2))))-0.785398
-% if innerpoint~=0
-%     theta=theta+1.5708
-% end
-% elseif t== 0
-% theta=3.14159-abs(atan((U7(1)-U1(1))/(U7(2)-U1(2))))-0.785398
-% theta=-theta
-% if innerpoint~=0
-%     theta=-(abs(theta)+1.5708)
-% end
-% end
+U7_orianted=U7;
 
 orianted_centroids=centroids-center
 R = [cos(theta) -sin(theta); sin(theta) cos(theta)];
 orianted_centroids =orianted_centroids* R           % apply the rotation about the origin
 orianted_centroids=orianted_centroids+center
 
+U7_orianted=U7_orianted-center
+U7_orianted=U7_orianted* R           % apply the rotation about the origin for the U7
+U7_orianted=U7_orianted+center
+end
+
 plot(orianted_centroids(:,1),orianted_centroids(:,2), 'b*')
-
-
-% while ( abs(atan((U7_orianted(1)-U1(1))/(U7_orianted(2)-U1(2))))<0.75 | abs(atan((U7_orianted(1)-U1(1))/(U7_orianted(2)-U1(2))))>0.80)
-% j=j+0.1
-% theta = pi/j  % pi/j radians 
-% 
-% if innerpoint~=0
-% theta=1.5708+theta+1.5708
-% end
-% 
-% if t==0
-%     theta=-theta
-% end
-% U7_orianted=U7;
-% 
-% orianted_centroids=centroids-center
-% R = [cos(theta) -sin(theta); sin(theta) cos(theta)];
-% orianted_centroids =orianted_centroids* R           % apply the rotation about the origin
-% orianted_centroids=orianted_centroids+center
-% 
-% U7_orianted=U7_orianted-center
-% U7_orianted=U7_orianted* R           % apply the rotation about the origin for the U7
-% U7_orianted=U7_orianted+center
-% end
-
     
     
 % estimate the shape of the Z-frame 
